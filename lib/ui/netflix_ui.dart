@@ -45,8 +45,15 @@ class _NetflixUiState extends State<NetflixUi> {
       body: SafeArea(child: Column(
         children: [
 GridView.builder(
-  gridDelegate: gridDelegate,
-   itemBuilder: itemBuilder
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: 20,
+    mainAxisExtent: 20,
+    childAspectRatio: 0.45,
+    ),
+   itemBuilder: (context,index) {
+    final selectedMovies = movie[index];
+   }
    )
         ],
       )

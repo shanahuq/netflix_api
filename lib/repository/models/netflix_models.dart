@@ -1,11 +1,11 @@
 
-class NetflixModel {
+class NetflixListModel {
     String? seasonId;
     List<Episodes>? episodes;
 
-    NetflixModel({this.seasonId, this.episodes});
+    NetflixListModel({this.seasonId, this.episodes});
 
-    NetflixModel.fromJson(Map<String, dynamic> json) {
+    NetflixListModel.fromJson(Map<String, dynamic> json) {
         seasonId = json["seasonId"];
         episodes = json["episodes"] == null ? null : (json["episodes"] as List).map((e) => Episodes.fromJson(e)).toList();
     }

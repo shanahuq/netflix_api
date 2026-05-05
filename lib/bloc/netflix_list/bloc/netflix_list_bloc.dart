@@ -12,12 +12,12 @@ class NetflixListBloc extends Bloc<NetflixListEvent, NetflixListState> {
 
 
   NetflixListBloc() : super(NetflixListInitial()) {
-    on<NetflixListEvent>((event, emit) async {
+    on<FetchNetflixListEvent>((event, emit) async {
       emit (NetflixListBlocLoading());
       try {
         netflixListModel = await netflixListApi.getnetflix();
         print('****************************');
-        emit(NetflixlistBlocLoaded());
+        emit (NetflixlistBlocLoaded(netflixListModel));
         print('***********Loaded***********');
       }
       catch(e) {

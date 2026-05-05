@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:netflix_api/bloc/netflix_list/bloc/netflix_list_bloc.dart';
+import 'package:netflix_api/repository/models/netflix_models.dart';
 
 class NetflixUi extends StatefulWidget {
   const NetflixUi({super.key});
@@ -9,6 +12,12 @@ class NetflixUi extends StatefulWidget {
 }
 
 class _NetflixUiState extends State<NetflixUi> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<NetflixListBloc>().add(FetchNetflixListEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +39,7 @@ class _NetflixUiState extends State<NetflixUi> {
             child: Icon(Icons.search, color: Colors.white),
           ),
           Padding(
-            padding:  EdgeInsets.only(right: 10.w),
+            padding: EdgeInsets.only(right: 10.w),
             child: Text(
               'Sign in',
               style: TextStyle(
@@ -42,21 +51,90 @@ class _NetflixUiState extends State<NetflixUi> {
           ),
         ],
       ),
-      body: SafeArea(child: Column(
-        children: [
-GridView.builder(
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-    crossAxisSpacing: 20,
-    mainAxisExtent: 20,
-    childAspectRatio: 0.45,
-    ),
-   itemBuilder: (context,index) {
-    final selectedMovies = movie[index];
-   }
-   )
-        ],
-      )
+      body: SafeArea(
+        child: BlocBuilder<NetflixListBloc, NetflixListState>(
+          builder: (context, state) {
+            if (state is NetflixListBlocLoading) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (state is NetflixListBlocError) {
+              return Center(
+                child: Text('Error', style: TextStyle(color: Colors.white)),
+              );
+            }
+            if (state is NetflixlistBlocLoaded) {
+              final data = state.data;
+              return GridView.builder(
+                // itemCount: data.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisExtent: 250,
+                  childAspectRatio: 0.45,
+                ),
+                itemBuilder: (context, index) {
+                  final season = data[index];
+
+                  final episode =
+                      (season.episodes != null && season.episodes!.isNotEmpty)
+                          ? season.episodes!.first
+                          : null;
+
+                  final imageUrl =
+                      episode
+                          ?.interestingMoment
+                          ?.image342X192
+                          ?.webp
+                          ?.value
+                          ?.url;
+
+                  final title = episode?.title ?? "No Title";
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.r),
+                      color: Colors.black,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(12.r),
+                            ),
+                            child:
+                                imageUrl != null
+                                    ? Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    )
+                                    : Container(color: Colors.black),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            } else {
+              return SizedBox();
+            }
+          },
+        ),
       ),
     );
   }

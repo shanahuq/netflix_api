@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:netflix_api/bloc/netflix_list/bloc/netflix_list_bloc.dart';
 import 'package:netflix_api/repository/models/netflix_models.dart';
+import 'package:netflix_api/ui/netflix_details_ui.dart';
 
 class NetflixUi extends StatefulWidget {
   const NetflixUi({super.key});
@@ -65,7 +66,7 @@ class _NetflixUiState extends State<NetflixUi> {
             if (state is NetflixlistBlocLoaded) {
               final data = state.data;
               return GridView.builder(
-                // itemCount: data.length,
+                itemCount: data.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 20,
@@ -89,43 +90,55 @@ class _NetflixUiState extends State<NetflixUi> {
                           ?.url;
 
                   final title = episode?.title ?? "No Title";
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      color: Colors.black,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(12.r),
-                            ),
-                            child:
-                                imageUrl != null
-                                    ? Image.network(
-                                      imageUrl,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    )
-                                    : Container(color: Colors.black),
-                          ),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => NetflixDetailsUi(id: season.id.toString()
+                              ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.r),
+                        color: Colors.black,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(12.r),
+                              ),
+                              child:
+                                  imageUrl != null
+                                      ? Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                      )
+                                      : Container(color: Colors.black),
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

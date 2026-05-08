@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:netflix_api/bloc/netflix_details/bloc/netflix_details_bloc.dart';
 
 class NetflixDetailsUi extends StatefulWidget {
-  const NetflixDetailsUi({super.key});
-
+  const NetflixDetailsUi({super.key, required this .id});
+final String id;
   @override
   State<NetflixDetailsUi> createState() => _NetflixDetailsUiState();
 }
 
 class _NetflixDetailsUiState extends State<NetflixDetailsUi> {
   @override
+  void initState () {
+    super.initState();
+    context.read<NetflixDetailsBloc>().add(FetchNetflixDetailsEvent(id: widget.id));
+  }
   Widget build(BuildContext context) {
     return  Scaffold(
         backgroundColor: Colors.black,
